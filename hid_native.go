@@ -148,6 +148,8 @@ func (d *HIDDevice) Close() error {
 
 // Promise<void> sendReport([EnforceRange] octet reportId, BufferSource data);
 func (d *HIDDevice) SendReport(id byte, data []byte) error {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 	if d.dev == nil {
 		return fmt.Errorf("device not opened")
 	}
@@ -156,6 +158,8 @@ func (d *HIDDevice) SendReport(id byte, data []byte) error {
 
 // Promise<void> sendFeatureReport([EnforceRange] octet reportId, BufferSource data);
 func (d *HIDDevice) SendFeatureReport(id byte, data []byte) error {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 	if d.dev == nil {
 		return fmt.Errorf("device not opened")
 	}
@@ -164,6 +168,8 @@ func (d *HIDDevice) SendFeatureReport(id byte, data []byte) error {
 
 // Promise<DataView> receiveFeatureReport([EnforceRange] octet reportId);
 func (d *HIDDevice) ReceiveFeatureReport(id byte) ([]byte, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 	if d.dev == nil {
 		return nil, fmt.Errorf("device not opened")
 	}
