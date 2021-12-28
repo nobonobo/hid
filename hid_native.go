@@ -167,6 +167,9 @@ func (d *HIDDevice) ReceiveFeatureReport(id byte) ([]byte, error) {
 	if d.dev == nil {
 		return nil, fmt.Errorf("device not opened")
 	}
+	if d.dev.ReadErr != nil {
+		return nil, d.dev.ReadErr
+	}
 	res := make(chan []byte)
 	d.req <- &request{id: id, res: res}
 	time.AfterFunc(3+time.Second, func() { close(res) })
