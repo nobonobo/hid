@@ -176,7 +176,7 @@ func (d *HIDDevice) ReceiveFeatureReport(id byte) ([]byte, error) {
 	if d.dev.ReadErr != nil {
 		return nil, d.dev.ReadErr
 	}
-	res := make(chan []byte)
+	res := make(chan []byte, 1)
 	d.req <- &request{id: id, res: res}
 	time.AfterFunc(3+time.Second, func() { close(res) })
 	b, ok := <-res
