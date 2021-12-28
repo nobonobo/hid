@@ -11,16 +11,16 @@ import (
 	lib "github.com/flynn/hid"
 )
 
-func GetDevices() []*HIDDevice {
+func GetDevices() ([]*HIDDevice, error) {
 	d, err := lib.Devices()
 	if err != nil {
-		return nil
+		return nil, err
 	}
 	res := []*HIDDevice{}
 	for _, v := range d {
 		res = append(res, &HIDDevice{DeviceInfo: v})
 	}
-	return res
+	return res, nil
 }
 
 func RequestDevice(options ...HIDDeviceFilter) ([]*HIDDevice, error) {
