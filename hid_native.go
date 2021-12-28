@@ -115,15 +115,15 @@ func (d *HIDDevice) Open() error {
 					case req = <-d.req:
 					default:
 					}
-					if req != nil {
-						if req.id == 0 {
-							req.res <- data
+				}
+				if req != nil {
+					if req.id == 0 {
+						req.res <- data
+						req = nil
+					} else {
+						if req.id == data[0] {
+							req.res <- data[1:]
 							req = nil
-						} else {
-							if req.id == data[0] {
-								req.res <- data[1:]
-								req = nil
-							}
 						}
 					}
 				}
@@ -178,7 +178,7 @@ func (d *HIDDevice) ReceiveFeatureReport(id byte) ([]byte, error) {
 	}
 	res := make(chan []byte, 1)
 	d.req <- &request{id: id, res: res}
-	time.AfterFunc(3+time.Second, func() { close(res) })
+	time.AfterFunc(3*time.Second, func() { close(res) })
 	b, ok := <-res
 	if !ok {
 		return nil, fmt.Errorf("timeout")
