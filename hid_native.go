@@ -179,9 +179,10 @@ func (d *HIDDevice) ReceiveFeatureReport(id byte) ([]byte, error) {
 	res := make(chan []byte, 1)
 	d.req <- &request{id: id, res: res}
 	time.AfterFunc(3*time.Second, func() { close(res) })
-	b, ok := <-res
-	if !ok {
+	select {
+	case b := <-res:
+		return b, nil
+	case <-time.NewTimer(3 * time.Second).C:
 		return nil, fmt.Errorf("timeout")
 	}
-	return b, nil
 }
